@@ -63,20 +63,22 @@ int GolgiSelect(int nfds,
                      exceptFds,
                      tv);
 
-    // check if we have reads/writes available
-    if(FD_ISSET(sockfd,
-                readFds)){
-        netLinux->readAvailable();
-        FD_CLR(sockfd,
-               readFds);
-        n--;
-    }
-    if(FD_ISSET(sockfd,
-                writeFds)){
-        netLinux->writeAvailable();
-        FD_CLR(sockfd,
-               writeFds);
-        n--;
+    // check if we have reads/writes available - only check if sockfd is valid
+    if(netLinux->getSockFD() != -1){
+        if(FD_ISSET(sockfd,
+                    readFds)){
+            netLinux->readAvailable();
+            FD_CLR(sockfd,
+                   readFds);
+            n--;
+        }
+        if(FD_ISSET(sockfd,
+                    writeFds)){
+            netLinux->writeAvailable();
+            FD_CLR(sockfd,
+                   writeFds);
+            n--;
+        }
     }
 
     GolgiService();
